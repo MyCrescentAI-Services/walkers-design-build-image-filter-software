@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interior Remodel AI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            margin: 20px;
+        }
+
+        .container {
+            margin: auto;
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0 0 10px #ccc;
+            width: 400px;
+            border-radius: 10px;
+        }
+
+        button {
+            margin-top: 10px;
+            background: #4CAF50;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        img {
+            margin-top: 20px;
+            max-width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        p {
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <h1>Interior Remodel AI</h1>
+    <div class="container">
+        <input type="file" id="fileInput" />
+        <button onclick="uploadImage()">Transform</button>
+        <p id="status">Upload an image and click Transform.</p>
+
+        <h3>Original Image</h3>
+        <img id="originalImage" src="" alt="Original Image" />
+        <h3>Transformed Image</h3>
+        <img id="transformedImage" src="" alt="Transformed Image" />
+    </div>
+
+    <script>
+        async function uploadImage() {
+            const fileInput = document.getElementById("fileInput");
+            const status = document.getElementById("status");
+            const originalImage = document.getElementById("originalImage");
+            const transformedImage = document.getElementById("transformedImage");
+
+            if (!fileInput.files[0]) {
+                alert("Please upload an image!");
+                return;
+            }
+
+            status.textContent = "Uploading and processing image...";
+
+            const formData = new FormData();
+            formData.append("image", fileInput.files[0]);
+
+            try {
+                const response = await fetch("http://localhost:3000/upload", {
+                    method: "POST",
+                    body: formData,
+                });
+
+                const result = await response.json();
+                console.log("Server Response:", result);
+
+                if (result.status === "success") {
+                    originalImage.src = result.original;
+                    transformedImage.src = result.transformed;
+                    status.textContent = "Transformation complete!";
+                } else {
+                    status.textContent = "Error: " + result.message;
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                status.textContent = "An error occurred!";
+            }
+        }
+    </script>
+</body>
+</html>
